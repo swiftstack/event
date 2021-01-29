@@ -2,41 +2,36 @@
 import PackageDescription
 
 let package = Package(
-    name: "Fiber",
+    name: "Event",
     products: [
         .library(
-            name: "Fiber",
-            targets: ["Fiber"])
+            name: "Event",
+            targets: ["Event"])
     ],
     dependencies: [
         .package(name: "Platform"),
-        .package(name: "Structures"),
         .package(name: "Time"),
         .package(name: "Log"),
         .package(name: "Test")
     ],
     targets: [
         .target(
-            name: "CCoro"),
-        .target(
             name: "Event",
             dependencies: [
                 "Platform",
-                "Time"
-            ]),
-        .target(
-            name: "Fiber",
-            dependencies: [
-                "CCoro",
-                "Platform",
-                "Event",
-                .product(name: "LinkedList", package: "Structures"),
                 "Time",
                 "Log"
+            ],
+            swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ]),
-        .testTarget(
-            name: "FiberTests",
-            dependencies: ["Fiber", "Test"]),
+        .executableTarget(
+            name: "Tests/Event",
+            dependencies: ["Event", "Test"],
+            path: "Tests/Event",
+            swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
+            ])
     ]
 )
 

@@ -25,7 +25,7 @@ extension Event {
         }
         let flags: Int32
         switch action {
-        case .add: flags = EV_ADD | EV_CLEAR
+        case .add: flags = EV_ADD
         case .delete: flags = EV_DELETE
         }
         self.init(
