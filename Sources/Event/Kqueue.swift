@@ -91,7 +91,7 @@ public struct Kqueue: PollerProtocol {
 
     public init() {
         let fd = kqueue()
-        guard var descriptor = Descriptor(rawValue: fd) else {
+        guard let descriptor = Descriptor(rawValue: fd) else {
             fatalError("kqueue init failed")
         }
         descriptor.flags |= FD_CLOEXEC
