@@ -3,7 +3,7 @@ import Time
 import Platform
 import Foundation
 
-public actor class Loop {
+public actor Loop {
     var poller = Poller()
     var eventHandlers: UnsafeMutableBufferPointer<Handlers>
 
@@ -11,8 +11,8 @@ public actor class Loop {
     public var isTerminated = false
 
     struct Handlers {
-        var read: UnsafeThrowingContinuation<Void>?
-        var write: UnsafeThrowingContinuation<Void>?
+        var read: UnsafeContinuation<Void, Swift.Error>?
+        var write: UnsafeContinuation<Void, Swift.Error>?
 
         var isEmpty: Bool { read == nil && write == nil }
     }
@@ -88,7 +88,7 @@ public actor class Loop {
     }
 
     func insertContinuation(
-        _ handler: UnsafeThrowingContinuation<Void>,
+        _ handler: UnsafeContinuation<Void, Swift.Error>,
         for descriptor: Descriptor,
         event: IOEvent,
         deadline: Time
