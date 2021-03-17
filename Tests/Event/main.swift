@@ -3,6 +3,10 @@ import Time
 import Platform
 @testable import Event
 
+#if os(Linux)
+let SOCK_STREAM = Int32(Platform.SOCK_STREAM.rawValue)
+#endif
+
 func createSocketPair() throws -> (Descriptor, Descriptor) {
     let zero = Descriptor(rawValue: 0)!
     var sv: (Descriptor, Descriptor) = (zero, zero)
