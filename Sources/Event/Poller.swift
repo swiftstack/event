@@ -1,7 +1,7 @@
 import Time
 import Platform
 
-public enum IOEvent: ConcurrentValue {
+public enum IOEvent: Sendable {
     case read, write
 }
 
