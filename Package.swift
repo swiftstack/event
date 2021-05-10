@@ -23,6 +23,7 @@ let package = Package(
                 "Log"
             ],
             swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"]),
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ]),
         .executableTarget(
@@ -30,6 +31,7 @@ let package = Package(
             dependencies: ["Event", "Test"],
             path: "Tests/Event",
             swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"]),
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ])
     ]
