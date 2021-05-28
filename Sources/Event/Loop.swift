@@ -37,6 +37,7 @@ public actor Loop {
         do {
             while !loop.isTerminated {
                 try await loop.poll(deadline: .now)
+                await Task.yield()
             }
         } catch {
             print("poll error:", error)
