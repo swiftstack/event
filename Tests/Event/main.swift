@@ -22,7 +22,7 @@ test.case("event") {
     let message = "test"
     let sv = try createSocketPair()
 
-    _ = Task.runDetached {
+    _ = Task.detached {
         // wait for "can write" event
         try! await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
 
@@ -46,14 +46,14 @@ test.case("event from another task") {
     let message = "test"
     let sv = try createSocketPair()
 
-    _ = Task.runDetached {
+    _ = Task.detached {
         // wait for "can write" event
         try! await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
 
         write(sv.0.rawValue, message, message.count)
     }
 
-    _ = Task.runDetached {
+    _ = Task.detached {
         // wait for "can read" event
         try! await loop.wait(for: sv.1, event: .read, deadline: .now + 10.ms)
 

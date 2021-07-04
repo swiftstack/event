@@ -7,7 +7,6 @@ public actor Loop {
     var poller = Poller()
     var eventHandlers: UnsafeMutableBufferPointer<Handlers>
 
-    @actorIndependent(unsafe)
     public var isTerminated = false
 
     struct Handlers {
@@ -33,9 +32,9 @@ public actor Loop {
 
     // FIXME: [Concurrency] adapt using custom executors
     public func run() async {
-        loop.isTerminated = false
+        isTerminated = false
         do {
-            while !loop.isTerminated {
+            while !isTerminated {
                 try await loop.poll(deadline: .now)
                 await Task.yield()
             }
