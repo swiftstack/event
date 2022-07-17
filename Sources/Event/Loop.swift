@@ -1,5 +1,4 @@
 import Log
-import Time
 import Platform
 import Foundation
 
@@ -31,11 +30,11 @@ public actor Loop {
     }
 
     // FIXME: [Concurrency] adapt using custom executors
-    public func run() async {
+    public func run(pollerTimeout: Duration = .milliseconds(2)) async {
         isTerminated = false
         do {
             while !isTerminated {
-                try await loop.poll(deadline: .now)
+                try await loop.poll(deadline: .now.advanced(by: pollerTimeout))
                 await Task.yield()
             }
         } catch {
@@ -43,8 +42,7 @@ public actor Loop {
         }
     }
 
-    // FIXME: [Concurrency] can't use deadline here yet
-    private func poll(deadline: Time = .distantFuture) throws {
+    private func poll(deadline: Instant) throws {
         let events = try poller.poll(deadline: deadline)
         if events.count != 0 {
             scheduleReady(events)
@@ -76,7 +74,7 @@ public actor Loop {
     public func wait(
         for socket: Descriptor,
         event: IOEvent,
-        deadline: Time) async throws
+        deadline: Instant?) async throws
     {
         return try await withUnsafeThrowingContinuation { continuation in
             insertContinuation(
@@ -91,7 +89,7 @@ public actor Loop {
         _ handler: UnsafeContinuation<Void, Swift.Error>,
         for descriptor: Descriptor,
         event: IOEvent,
-        deadline: Time
+        deadline: Instant?
     ) {
         switch event {
         case .read:

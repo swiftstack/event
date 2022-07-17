@@ -1,4 +1,3 @@
-import Time
 import Platform
 
 public enum IOEvent: Sendable {
@@ -7,7 +6,7 @@ public enum IOEvent: Sendable {
 
 protocol PollerProtocol {
     var descriptor: Descriptor { get }
-    mutating func poll(deadline: Time?) throws -> ArraySlice<Event>
+    mutating func poll(deadline: Instant?) throws -> ArraySlice<Event>
     mutating func add(socket: Descriptor, event: IOEvent)
     mutating func remove(socket: Descriptor, event: IOEvent)
 }

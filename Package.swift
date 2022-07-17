@@ -14,7 +14,6 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Platform"),
-        .package(name: "Time"),
         .package(name: "Log"),
         .package(name: "Test"),
     ],
@@ -23,7 +22,6 @@ let package = Package(
             name: "Event",
             dependencies: [
                 "Platform",
-                "Time",
                 "Log"
             ]),
         .executableTarget(

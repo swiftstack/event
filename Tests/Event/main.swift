@@ -1,11 +1,14 @@
 import Test
-import Time
 import Platform
 @testable import Event
 
 #if os(Linux)
 let SOCK_STREAM = Int32(Platform.SOCK_STREAM.rawValue)
 #endif
+
+extension Int {
+    var ms: Instant.Duration { .milliseconds(self) }
+}
 
 func createSocketPair() throws -> (Descriptor, Descriptor) {
     let zero = Descriptor(rawValue: 0)!

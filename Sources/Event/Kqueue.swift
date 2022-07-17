@@ -1,6 +1,5 @@
 #if os(macOS) || os(iOS)
 
-import Time
 import Platform
 
 public typealias Poller = Kqueue
@@ -101,19 +100,10 @@ public struct Kqueue: PollerProtocol {
         self.changes = [Event]()
     }
 
-    // TODO: [Concurrency] enable timeoutSinceNow
-    public mutating func poll(deadline: Time?) throws -> ArraySlice<Event> {
+    public mutating func poll(deadline: Instant?) throws -> ArraySlice<Event> {
         var count: Int32 = -1
 
         while count < 0 {
-            #if DEBUG
-            var timeout = timespec(tv_sec: 0, tv_nsec: 0)
-            count = kevent(
-                descriptor.rawValue,
-                changes, Int32(changes.count),
-                &events, Int32(events.count),
-                &timeout)
-            #else
             if let deadline = deadline {
                 var timeout = deadline.timeoutSinceNow
                 count = kevent(
@@ -129,7 +119,6 @@ public struct Kqueue: PollerProtocol {
                     &events, Int32(events.count),
                     nil)
             }
-            #endif
 
             changes = []
 

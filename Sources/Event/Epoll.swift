@@ -1,6 +1,5 @@
 #if os(Linux)
 
-import Time
 import CEpoll
 import Platform
 
@@ -78,7 +77,7 @@ public struct Epoll: PollerProtocol {
         self.events = [Event](repeating: Event(), count: pollSize)
     }
 
-    public mutating func poll(deadline: Time?) throws -> ArraySlice<Event> {
+    public mutating func poll(deadline: Instant?) throws -> ArraySlice<Event> {
         var count: Int32 = -1
         while count < 0 {
             count = epoll_wait(

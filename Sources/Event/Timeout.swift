@@ -1,29 +1,30 @@
-import Time
 import Platform
+
+public typealias Instant = ContinuousClock.Instant
 
 // Converts deadline to timeout in seconds expected by epoll/kqueue
 
-extension Time {
+extension Instant {
 #if os(macOS) || os(iOS)
-    var kqueueMaximumTimeout: Time.Duration {
-        return (60*60*24).s
+    var kqueueMaximumTimeout: Duration {
+        return .seconds(60*60*24)
     }
 
     var timeoutSinceNow: timespec {
         guard self < .now + kqueueMaximumTimeout else {
             return timespec(
-                tv_sec: kqueueMaximumTimeout.seconds,
-                tv_nsec: kqueueMaximumTimeout.nanoseconds)
+                tv_sec: Int(kqueueMaximumTimeout.components.seconds),
+                tv_nsec: Int(kqueueMaximumTimeout.components.attoseconds / 1_000_000_000))
         }
-        let duration = timeIntervalSinceNow.duration
-        return timespec(tv_sec: duration.seconds, tv_nsec: duration.nanoseconds)
+        let duration = Self.now.duration(to: self)
+        return timespec(
+            tv_sec: Int(duration.components.seconds),
+            tv_nsec: Int(duration.components.attoseconds / 1_000_000_000))
     }
 #else
     var timeoutSinceNow: Int32 {
-        guard self < Time.distantFuture else {
-            return Int32.max
-        }
-        let timeout = timeIntervalSinceNow.duration.ms
+        let duration = Self.now.duration(to: self)
+        let timeout = duration.components.seconds * 1_000 + duration.components.attoseconds / 1_000_000_000_000_000
         guard timeout < Int(Int32.max) else {
             return Int32.max
         }
