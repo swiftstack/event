@@ -23,14 +23,16 @@ let package = Package(
             dependencies: [
                 .product(name: "Platform", package: "platform"),
                 .product(name: "Log", package: "log"),
-            ]),
+            ],
+            swiftSettings: swift6),
         .executableTarget(
             name: "Tests/Event",
             dependencies: [
                 .target(name: "Event"),
                 .product(name: "Test", package: "test"),
             ],
-            path: "Tests/Event"),
+            path: "Tests/Event",
+            swiftSettings: swift6),
     ]
 )
 
@@ -38,6 +40,15 @@ let package = Package(
 package.targets.append(.systemLibrary(name: "CEpoll", path: "./Headers/CEpoll"))
 package.targets[0].dependencies.append("CEpoll")
 #endif
+
+let swift6: [SwiftSetting] = [
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("StrictConcurrency"),
+    .enableUpcomingFeature("ImplicitOpenExistentials"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+]
 
 // MARK: - custom package source
 
