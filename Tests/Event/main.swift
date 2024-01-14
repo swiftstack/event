@@ -21,7 +21,7 @@ func createSocketPair() throws -> (Descriptor, Descriptor) {
     return sv
 }
 
-test.case("event") {
+test("event") {
     let message = "test"
     let sv = try createSocketPair()
 
@@ -45,7 +45,7 @@ test.case("event") {
     await loop.run()
 }
 
-test.case("event from another task") {
+test("event from another task") {
     let message = "test"
     let sv = try createSocketPair()
 
@@ -71,4 +71,4 @@ test.case("event from another task") {
     await loop.run()
 }
 
-test.run()
+await run()
