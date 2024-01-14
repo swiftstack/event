@@ -11,12 +11,9 @@ extension Instant {
     }
 
     var timeoutSinceNow: timespec {
-        guard self < .now + kqueueMaximumTimeout else {
-            return timespec(
-                tv_sec: Int(kqueueMaximumTimeout.components.seconds),
-                tv_nsec: Int(kqueueMaximumTimeout.components.attoseconds / 1_000_000_000))
-        }
-        let duration = Self.now.duration(to: self)
+        let duration = self < .now + kqueueMaximumTimeout
+            ? Self.now.duration(to: self)
+            : kqueueMaximumTimeout
         return timespec(
             tv_sec: Int(duration.components.seconds),
             tv_nsec: Int(duration.components.attoseconds / 1_000_000_000))
@@ -24,7 +21,8 @@ extension Instant {
 #else
     var timeoutSinceNow: Int32 {
         let duration = Self.now.duration(to: self)
-        let timeout = duration.components.seconds * 1_000 + duration.components.attoseconds / 1_000_000_000_000_000
+        let timeout = duration.components.seconds * 1_000 +
+            duration.components.attoseconds / 1_000_000_000_000_000
         guard timeout < Int(Int32.max) else {
             return Int32.max
         }

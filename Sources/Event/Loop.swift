@@ -74,9 +74,9 @@ public actor Loop {
     public func wait(
         for socket: Descriptor,
         event: IOEvent,
-        deadline: Instant?) async throws
-    {
-        return try await withUnsafeThrowingContinuation { continuation in
+        deadline: Instant?
+    ) async throws {
+        try await withUnsafeThrowingContinuation { continuation in
             insertContinuation(
                 continuation,
                 for: socket,
@@ -122,15 +122,15 @@ public let loop: Loop = .init()
 extension UnsafeMutableBufferPointer where Element == Loop.Handlers {
     typealias Watchers = Loop.Handlers
 
-    subscript(_ descriptor: Descriptor) -> Watchers{
+    subscript(_ descriptor: Descriptor) -> Watchers {
         get { self[Int(descriptor.rawValue)] }
         set { self[Int(descriptor.rawValue)] = newValue }
     }
 
     static func allocate(
         repeating element: Watchers,
-        count: Int) -> UnsafeMutableBufferPointer<Watchers>
-    {
+        count: Int
+    ) -> UnsafeMutableBufferPointer<Watchers> {
         let pointer = UnsafeMutablePointer<Watchers>.allocate(capacity: count)
         pointer.initialize(repeating: element, count: count)
 
