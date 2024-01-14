@@ -25,14 +25,14 @@ test("event") {
     let message = "test"
     let sv = try createSocketPair()
 
-    _ = Task.detached {
+    Task {
         // wait for "can write" event
-        try! await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
+        try await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
 
         write(sv.0.rawValue, message, message.count)
 
         // wait for "can read" event
-        try! await loop.wait(for: sv.1, event: .read, deadline: .now + 10.ms)
+        try await loop.wait(for: sv.1, event: .read, deadline: .now + 10.ms)
 
         var buffer = [UInt8](repeating: 0, count: message.count)
         read(sv.1.rawValue, &buffer, message.count)
@@ -43,22 +43,23 @@ test("event") {
     }
 
     await loop.run()
+    expect(await loop.isTerminated, "loop wasn't terminated")
 }
 
 test("event from another task") {
     let message = "test"
     let sv = try createSocketPair()
 
-    _ = Task.detached {
+    Task {
         // wait for "can write" event
-        try! await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
+        try await loop.wait(for: sv.0, event: .write, deadline: .now + 10.ms)
 
         write(sv.0.rawValue, message, message.count)
     }
 
-    _ = Task.detached {
+    Task {
         // wait for "can read" event
-        try! await loop.wait(for: sv.1, event: .read, deadline: .now + 10.ms)
+        try await loop.wait(for: sv.1, event: .read, deadline: .now + 10.ms)
 
         var buffer = [UInt8](repeating: 0, count: message.count)
         read(sv.1.rawValue, &buffer, message.count)
@@ -69,6 +70,7 @@ test("event from another task") {
     }
 
     await loop.run()
+    expect(await loop.isTerminated, "loop wasn't terminated")
 }
 
 await run()
